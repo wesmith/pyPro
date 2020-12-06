@@ -1,10 +1,12 @@
 import cv2
+import numpy as np   # WS mod
 print(cv2.__version__)
 scale = 1
 dispW = 320 * scale
 dispH = 240 * scale
 flip = 0
 thresh = 200
+picam = True # WS mod
 
 def nothing():
     pass
@@ -22,14 +24,14 @@ cv2.imshow('Background Mask', BGMask)
 cv2.moveWindow('Background Mask', dispW + 70, 0)
 
 FGMask = cv2.bitwise_not(BGMask)
+kernel = np.ones((3,3), np.uint8)  # WS mod
+FGMask = cv2.erode(FGMask, kernel, iterations=1)  # WS mod
 cv2.imshow('Foreground Mask', FGMask)
 cv2.moveWindow('Foreground Mask', dispW + 70, dispH + 60)
 
 FG = cv2.bitwise_and(cvLogo, cvLogo, mask=FGMask)
 cv2.imshow('FG', FG)
 cv2.moveWindow('FG', 2 * dispW + 75, dispH + 60)
-
-picam = True # WS mod
 
 if picam: 
     # gstreamer command line for pi camera
