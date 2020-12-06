@@ -45,7 +45,8 @@ while True:
 
     grb = cv2.merge((g, r, b))  # mix up the colors
     #gbr = cv2.merge((g, b, r))  # mix
-    rgb = cv2.merge((r, g, b))  # mix
+    #rgb = cv2.merge((r, g, b))  # mix
+    inv = cv2.merge((255-b, 255-g, 255-r))  # color negative  WS mod
 
     off = 75
     cv2.imshow('Blue', blue)
@@ -56,8 +57,8 @@ while True:
     cv2.moveWindow('Red', dispW + off, dispH + off)
     cv2.imshow('GRB', grb)
     cv2.moveWindow('GRB', 2*dispW + off, 0)
-    cv2.imshow('RGB', rgb)
-    cv2.moveWindow('RGB', 2*dispW + off, dispH + off)
+    cv2.imshow('INV', inv)
+    cv2.moveWindow('INV', 2*dispW + off, dispH + off)
 
     cv2.imshow(camNam, frame)
     cv2.moveWindow(camNam, 0, 0)
