@@ -13,13 +13,13 @@ def nothing(x):
 
 cv2.namedWindow('Trackbars')
 
-cv2.createTrackbar('hueLo', 'Trackbars',  50, 179, nothing)
-cv2.createTrackbar('hueHi', 'Trackbars', 100, 179, nothing)
-cv2.createTrackbar('hueLo2', 'Trackbars',  50, 179, nothing)
-cv2.createTrackbar('hueHi2', 'Trackbars', 100, 179, nothing)
-cv2.createTrackbar('satLo', 'Trackbars', 100, 255, nothing)
+cv2.createTrackbar('hueLo', 'Trackbars', 100, 179, nothing)
+cv2.createTrackbar('hueHi', 'Trackbars', 135, 179, nothing)
+cv2.createTrackbar('hueLo2', 'Trackbars', 50, 179, nothing)
+cv2.createTrackbar('hueHi2', 'Trackbars', 50, 179, nothing)
+cv2.createTrackbar('satLo', 'Trackbars', 175, 255, nothing)
 cv2.createTrackbar('satHi', 'Trackbars', 255, 255, nothing)
-cv2.createTrackbar('valLo', 'Trackbars', 100, 255, nothing)
+cv2.createTrackbar('valLo', 'Trackbars', 110, 255, nothing)
 cv2.createTrackbar('valHi', 'Trackbars', 255, 255, nothing)
 
 cv2.moveWindow('Trackbars', 1320, dispH + 150)
