@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-print(cv2.__version__)
+print('openCV ' + cv2.__version__)
 scale = 2
 dispW = 320 * scale
 dispH = 240 * scale
