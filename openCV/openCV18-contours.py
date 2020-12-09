@@ -6,23 +6,28 @@ dispW = 320 * scale
 dispH = 240 * scale
 flip = 0
 
-picam = True # WS mod: False for logitech, True for picam
+# USER INPUTS
+picam    = True # WS mod: False for logitech camera, True for picam
+color_ch = 0    # WS mod: 0, 1, 2 to track blue, green, red objects, respectively
 
 def nothing(x):
     pass
 
-cv2.namedWindow('Trackbars')
+color_nam = ['Blue', 'Green', 'Red']             # WS mod
+txt = 'Trackbars Set for ' + color_nam[color_ch] # WS mod
+cv2.namedWindow(txt)
 
-cv2.createTrackbar('hueLo', 'Trackbars', 100, 179, nothing)
-cv2.createTrackbar('hueHi', 'Trackbars', 135, 179, nothing)
-cv2.createTrackbar('hueLo2', 'Trackbars', 50, 179, nothing)
-cv2.createTrackbar('hueHi2', 'Trackbars', 50, 179, nothing)
-cv2.createTrackbar('satLo', 'Trackbars', 175, 255, nothing)
-cv2.createTrackbar('satHi', 'Trackbars', 255, 255, nothing)
-cv2.createTrackbar('valLo', 'Trackbars', 110, 255, nothing)
-cv2.createTrackbar('valHi', 'Trackbars', 255, 255, nothing)
+# WS mod: set the trackbar lower limits according to desired color
+#         color order in list: blue limits, green limits, red limits
+val_names  = ['hueLo', 'hueHi', 'hueLo2', 'hueHi2', 'satLo', 'satHi', 'valLo', 'valHi']
+vals       = [[100, 135,  50,  50, 175, 255, 110, 255], # blue  settings
+              [ 50, 100,  50,  50, 175, 255,  90, 255], # green settings
+              [  0,  20, 150, 179, 130, 255, 145, 255]] # red   settings
+up_lims    =  [179, 179, 179, 179, 255, 255, 255, 255]
+for nam, val0, val1 in zip(val_names, vals[color_ch], up_lims):
+    cv2.createTrackbar(nam, txt, val0, val1, nothing)
 
-cv2.moveWindow('Trackbars', 1320, dispH + 150)
+cv2.moveWindow(txt, 1320, dispH + 150)
 
 if picam: 
     # gstreamer command line for pi camera
@@ -51,14 +56,14 @@ while True:
 
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-    hueLo = cv2.getTrackbarPos('hueLo', 'Trackbars')
-    hueHi = cv2.getTrackbarPos('hueHi', 'Trackbars')
-    hueLo2 = cv2.getTrackbarPos('hueLo2', 'Trackbars')
-    hueHi2 = cv2.getTrackbarPos('hueHi2', 'Trackbars')
-    satLo = cv2.getTrackbarPos('satLo', 'Trackbars')
-    satHi = cv2.getTrackbarPos('satHi', 'Trackbars')
-    valLo = cv2.getTrackbarPos('valLo', 'Trackbars')
-    valHi = cv2.getTrackbarPos('valHi', 'Trackbars')
+    hueLo  = cv2.getTrackbarPos('hueLo',  txt)
+    hueHi  = cv2.getTrackbarPos('hueHi',  txt)
+    hueLo2 = cv2.getTrackbarPos('hueLo2', txt)
+    hueHi2 = cv2.getTrackbarPos('hueHi2', txt)
+    satLo  = cv2.getTrackbarPos('satLo',  txt)
+    satHi  = cv2.getTrackbarPos('satHi',  txt)
+    valLo  = cv2.getTrackbarPos('valLo',  txt)
+    valHi  = cv2.getTrackbarPos('valHi',  txt)
 
     l_b = np.array([hueLo, satLo, valLo])
     u_b = np.array([hueHi, satHi, valHi])
