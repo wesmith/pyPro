@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-#from adafruit_servokit import ServoKit
+from adafruit_servokit import ServoKit
 
 # USER INPUTS
 picam    = False # WS mod: False for logitech camera (on servo tracker), True for picam
