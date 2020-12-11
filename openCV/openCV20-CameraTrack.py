@@ -4,8 +4,8 @@ from adafruit_servokit import ServoKit
 
 # USER INPUTS
 picam    = False # WS mod: False for logitech camera (on servo tracker), True for picam
-color_ch = 0     # WS mod: 0, 1, 2 to track blue, green, red objects, respectively
-alpha    = 0.5   # WS mod: smoothing factor for tracking, (0,1): alpha = 0 means no smoothing
+color_ch = 2     # WS mod: 0, 1, 2 to track blue, green, red objects, respectively
+alpha    = 0.2   # WS mod: smoothing factor for tracking, (0,1): alpha = 0 means no smoothing
 scale    = 2     # WS mod: scale to multiply 320x240 basic frame
 
 print('openCV ' + cv2.__version__)
@@ -13,11 +13,16 @@ dispW = 320 * scale
 dispH = 240 * scale
 flip = 0
 
-#kit  = ServoKit(channels=16)
 pan  = 90
-tilt = 45
-#kit.servo[0].angle = pan
-#kit.servo[1].angle = tilt
+tilt = 90
+
+kit  = ServoKit(channels=16)
+pan_servo  = kit.servo[0] # WS mod
+tilt_servo = kit.servo[1] # WS mod
+
+# init
+pan_servo.angle  = pan
+tilt_servo.angle = tilt
 
 def nothing(x):
     pass
@@ -104,14 +109,19 @@ while True:
             objX = alpha * objX + (1 - alpha) * (x + w/2)  # WS mod to smooth centroid
             objY = alpha * objY + (1 - alpha) * (y + h/2)  # WS mod
             cv2.circle(frame, (int(objX), int(objY)), 5, (0, 255, 255), -1) # WS mod
-            errorPan  = objX - dispW/2  # don't use actual_dispW or actual_dispH: not correct for logitech
-            errorTilt = objY - dispH/2
             
-            # play with these values: 15, 43: make variables
-            if abs(errorPan) > 15:
-                pan  = pan - errorPan/43
-            if abs(errorTilt) > 15:
-                tilt = tilt - errorTilt/43
+            errorPan  =   objX - dispW/2  # don't use actual_dispW or actual_dispH: not correct for logitech
+            # WS mod: introduce minus sign for my servo setup: 
+            # WS tilt-servo orientation must be 180 deg from Paul's
+            errorTilt = -(objY - dispH/2) 
+            
+            # play with these values: Paul uses 15, 43: make variables
+            pixels_per_degree = 40  # WS mod: 30 causes oscillations
+            do_not_move_error = 15
+            if abs(errorPan) > do_not_move_error:
+                pan  = pan - errorPan/pixels_per_degree
+            if abs(errorTilt) > do_not_move_error:
+                tilt = tilt - errorTilt/pixels_per_degree
 
             if pan > 180: 
                 pan = 180
@@ -129,8 +139,8 @@ while True:
             #print(pan, tilt)
             # put up the pan and tilt values on the image as a red dot, though not too enlightening
             #cv2.circle(frame, (int(pan), int(tilt)), 5, (0, 0, 255), -1) # WS mod
-            #kit.servo[0].angle = pan
-            #kit.servo[1].angle = tilt
+            pan_servo.angle  = pan
+            tilt_servo.angle = tilt
             break  # only show the biggest contour if big enough
 
     cv2.imshow(camNam, frame)
@@ -138,6 +148,11 @@ while True:
 
     if cv2.waitKey(1) == ord('q'):
         break
+
 cam.release()
 cv2.destroyAllWindows()
+
+# reset servos to neutral position
+pan_servo.angle  = 90
+tilt_servo.angle = 90
 
