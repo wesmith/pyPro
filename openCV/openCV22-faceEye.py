@@ -1,12 +1,12 @@
 import cv2
 print(cv2.__version__)
-scale = 2
+scale = 1
 dispW = 320 * scale
 dispH = 240 * scale
 flip = 0
 
 picam = False # WS mod  the face-detection latency is best with logitech camera (picam = False)
-alpha = 0.5   # WS mod: smoothing factor for tracking, (0,1): alpha = 0 means no smoothing
+alpha = 0.2   # WS mod: smoothing factor for tracking, (0,1): alpha = 0 means no smoothing
 
 face_cascade = cv2.CascadeClassifier('cascade/face.xml')
 eye_cascade  = cv2.CascadeClassifier('cascade/eye.xml')
