@@ -2,17 +2,23 @@ import cv2
 import numpy as np
 from adafruit_servokit import ServoKit
 
+# note when starting up: it takes about 10 seconds for I2C to be established
+
 # USER INPUTS
 picam    = False # WS mod: False for logitech camera (on servo tracker), True for picam
 color_ch = 2     # WS mod: 0, 1, 2 to track blue, green, red objects, respectively
 alpha    = 0.2   # WS mod: smoothing factor for tracking, (0,1): alpha = 0 means no smoothing
-scale    = 2     # WS mod: scale to multiply 320x240 basic frame
+scale    = 2     # WS mod: scale to multiply 320x240 basic frame: usually = 2
+# servo-tracking params: scale may not effect these, since scale just windows
+pixels_per_degree = 18 * scale  # WS mod: 30 (at scale 2) causes oscillations
+do_not_move_error =  8 * scale
 
 print('openCV ' + cv2.__version__)
 dispW = 320 * scale
 dispH = 240 * scale
-flip = 0
+flip = 0  # for picam in current configuration
 
+# initial values
 pan  = 90
 tilt = 90
 
@@ -112,12 +118,9 @@ while True:
             
             errorPan  =   objX - dispW/2  # don't use actual_dispW or actual_dispH: not correct for logitech
             # WS mod: introduce minus sign for my servo setup: 
-            # WS tilt-servo orientation must be 180 deg from Paul's
+            # WS tilt-servo orientation is 180 deg from Paul's
             errorTilt = -(objY - dispH/2) 
             
-            # play with these values: Paul uses 15, 43: make variables
-            pixels_per_degree = 40  # WS mod: 30 causes oscillations
-            do_not_move_error = 15
             if abs(errorPan) > do_not_move_error:
                 pan  = pan - errorPan/pixels_per_degree
             if abs(errorTilt) > do_not_move_error:
