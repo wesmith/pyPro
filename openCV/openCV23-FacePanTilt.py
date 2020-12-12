@@ -7,7 +7,7 @@ from adafruit_servokit import ServoKit
 # USER INPUTS
 picam    = False # WS mod: False for logitech camera (on servo tracker), True for picam
 alpha    = 0.2   # WS mod: smoothing factor for tracking, (0,1): alpha = 0 means no smoothing
-scale    = 1     # WS mod: scale to multiply 320x240 basic frame: usually = 2
+scale    = 2     # WS mod: scale to multiply 320x240 basic frame: usually = 2
 # servo-tracking params: scale may not effect these, since scale just windows
 pixels_per_degree = 18 * scale  # WS mod: 30 (at scale 2) causes oscillations
 do_not_move_error =  8 * scale
