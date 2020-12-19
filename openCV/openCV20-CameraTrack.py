@@ -1,17 +1,19 @@
 import cv2
 import numpy as np
 from adafruit_servokit import ServoKit
+from time import time
 
 # note when starting up: it takes about 10 seconds for I2C to be established
 
 # USER INPUTS
-picam    = False # WS mod: False for logitech camera (on servo tracker), True for picam
+picam    = True # WS mod: False for logitech camera (on servo tracker), True for picam
 color_ch = 2     # WS mod: 0, 1, 2 to track blue, green, red objects, respectively
-alpha    = 0.2   # WS mod: smoothing factor for tracking, (0,1): alpha = 0 means no smoothing
+alpha    = 0.2   # WS mod: smoothing factor for tracking (0,1): alpha = 0 means no smoothing
 scale    = 2     # WS mod: scale to multiply 320x240 basic frame: usually = 2
 # servo-tracking params: scale may not effect these, since scale just windows
 pixels_per_degree = 18 * scale  # WS mod: 30 (at scale 2) causes oscillations
 do_not_move_error =  8 * scale
+fps_smooth = 0.9  # WS mod: smoothing factor for fps calcs (0,1): fps_smooth = 0 means no smoothing
 
 print('openCV ' + cv2.__version__)
 dispW = 320 * scale
@@ -73,8 +75,20 @@ print('ACTUAL DISPLAY WIDTH, HEIGHT: ', actual_dispW, actual_dispH)
 
 objX, objY = 0, 0  # WS mod for implementing smoother
 
+t_old = time()  # WS mod
+fps   = 0       # WS mod: frames per second
+font  = cv2.FONT_HERSHEY_SIMPLEX
+
 while True:
     ret, frame = cam.read()
+
+    # WS mod: FPS calcs
+    dt    = time() - t_old
+    t_old = time()
+    fps   = fps_smooth * fps + (1 - fps_smooth) / dt
+    tfps = '{:4.1f} FPS'.format(fps)
+    #print(tfps)
+
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
     hueLo  = cv2.getTrackbarPos('hueLo',  txt)
@@ -146,6 +160,7 @@ while True:
             tilt_servo.angle = tilt
             break  # only show the biggest contour if big enough
 
+    cv2.putText(frame, tfps, (0, 25), font, 1, (100, 255, 255), 2)
     cv2.imshow(camNam, frame)
     cv2.moveWindow(camNam, 0, 0)
 
